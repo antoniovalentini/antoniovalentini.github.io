@@ -13,6 +13,10 @@ tags:
   - unity
 ---
 
+import Latex from "@/components/Latex.astro";
+
+---
+
 In this article I'll briefly explain how you can rotate an object, using Unity, in order for it to "look" at the mouse position.
 
 ## TL;DR
@@ -35,30 +39,30 @@ private void PointToMouse(Transform player)
 
 Let's start with the definition [Math.Atan2](https://docs.unity3d.com/ScriptReference/Mathf.Atan2.html) that you can find in the Unity documentation:
 
-> Returns the angle in radians whose Tan is y/x.  
+> Returns the angle in radians whose Tan is y/x.
 > Return value is the angle between the x-axis and a 2D vector starting at zero and terminating at (x,y).
 
 And that's why, at line 7, we provide the x and y of the mouse position (multiplying everything by the radians-to-degrees conversion constant). But where does all this come from?
 
 To understand that, we need to dust off some old mathematics memories and make use of some linear equation formulas. And so, given two lines:
 
-$latex \\displaystyle y\_1 = m\_1x\_1 + q\_1 \\\\ y\_2 = m\_2x\_2 + q\_2 $
+<Latex formula='y_1 = m_1x_1 + q_1 \\ y_2 = m_2x_2 + q_2'/>
 
 and their respective slopes `m1` and `m2`, the angle between them is given by:
 
-$latex \\displaystyle \\varphi = \\arctan \\left|\\frac{m\_1 + m\_2}{1 + (m\_1m\_2)} \\right|$
+<Latex formula='\varphi = \arctan \left| \dfrac{m_1 + m_2}{1 + (m_1 m_2)} \right|'/>
 
 All right but, how do we go from the formula above to the Unity's one which basically is:
 
-$latex \\displaystyle \\tan (\\varphi) = \\left|\\frac{y\_2}{x\_2}\\right| \\Rightarrow \\varphi = \\arctan \\left|\\frac{y\_2}{x\_2} \\right|$
+<Latex formula='\tan (\varphi) = \left|\dfrac{y_2}{x_2}\right| \Rightarrow \varphi = \arctan \left|\dfrac{y_2}{x_2} \right|'/>
 
 Simply by considering the first line as the x-axis, and the second one (the one pointing to the mouse) as passing from zero. That gives us the following:
 
-$latex \\displaystyle y\_1 = m\_1x\_1 = 0 \\Rightarrow m\_1 = 0 \\\\ \\\\ y\_2 = m\_2x\_2 \\Rightarrow m\_2 = \\frac{y\_2}{x\_2} $
+<Latex formula='\begin{aligned}y_1 &= m_1x_1 = 0 \Rightarrow m_1 = 0 \\ y_2 &= m_2x_2 \Rightarrow m_2 = \dfrac{y_2}{x_2}\end{aligned}'/>
 
 And by replacing slopes with their respective values, we end up with:
 
-$latex \\displaystyle \\varphi = \\arctan \\left|\\frac{0 + \\frac{y\_2}{x\_2}}{1 + (0\\frac{y\_2}{x\_2})} \\right| \\Rightarrow \\varphi = \\arctan \\left|\\frac{y\_2}{x\_2} \\right| $
+<Latex formula='\varphi = \arctan \left|\dfrac{0 + \dfrac{y_2}{x_2}}{1 + (0\dfrac{y_2}{x_2})} \right| \Rightarrow \varphi = \arctan \left|\dfrac{y_2}{x_2} \right|'/>
 
 ## Applying the simplified formula in Unity
 
