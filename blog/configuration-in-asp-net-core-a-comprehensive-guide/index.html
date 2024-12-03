@@ -1,0 +1,479 @@
+<!DOCTYPE html><html lang="en"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔬</text></svg>"><meta name="generator" content="Astro v4.16.16"><!-- Canonical URL --><link rel="canonical" href="https://antoniovalentini.github.io/blog/configuration-in-asp-net-core-a-comprehensive-guide/"><!-- Primary Meta Tags --><title>Configuration in ASP.NET Core: A Comprehensive Guide | Antonio Valentini</title><meta name="title" content="Configuration in ASP.NET Core: A Comprehensive Guide | Antonio Valentini"><meta name="description" content=""><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://antoniovalentini.github.io/blog/configuration-in-asp-net-core-a-comprehensive-guide/"><meta property="og:title" content="Configuration in ASP.NET Core: A Comprehensive Guide | Antonio Valentini"><meta property="og:description" content=""><meta property="og:image" content="https://antoniovalentini.github.io/blog/configuration-in-asp-net-core-a-comprehensive-guide/"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://antoniovalentini.github.io/blog/configuration-in-asp-net-core-a-comprehensive-guide/"><meta property="twitter:title" content="Configuration in ASP.NET Core: A Comprehensive Guide | Antonio Valentini"><meta property="twitter:description" content=""><meta property="twitter:image" content="https://antoniovalentini.github.io/blog/configuration-in-asp-net-core-a-comprehensive-guide/"><!-- PageFind --><link href="/pagefind/pagefind-ui.css" rel="stylesheet"><script src="/pagefind/pagefind-ui.js"></script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script>
+  function init() {
+    preloadTheme();
+    onScroll();
+    animate();
+    updateThemeButtons();
+    addCopyCodeButtons();
+    setGiscusTheme();
+
+    const backToTop = document.getElementById("back-to-top");
+    backToTop?.addEventListener("click", (event) => scrollToTop(event));
+
+    const backToPrev = document.getElementById("back-to-prev");
+    backToPrev?.addEventListener("click", () => window.history.back());
+
+    const lightThemeButton = document.getElementById("light-theme-button");
+    lightThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "light");
+      toggleTheme(false);
+      updateThemeButtons();
+    });
+
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    darkThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "dark");
+      toggleTheme(true);
+      updateThemeButtons();
+    });
+
+    const systemThemeButton = document.getElementById("system-theme-button");
+    systemThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "system");
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+      updateThemeButtons();
+    });
+
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", (event) => {
+        if (localStorage.theme === "system") {
+          toggleTheme(event.matches);
+        }
+      });
+
+    document.addEventListener("scroll", onScroll);
+  }
+
+  function updateThemeButtons() {
+    const theme = localStorage.getItem("theme");
+    const lightThemeButton = document.getElementById("light-theme-button");
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    const systemThemeButton = document.getElementById("system-theme-button");
+
+    function removeActiveButtonTheme(button) {
+      button?.classList.remove("bg-black/5");
+      button?.classList.remove("dark:bg-white/5");
+    }
+
+    function addActiveButtonTheme(button) {
+      button?.classList.add("bg-black/5");
+      button?.classList.add("dark:bg-white/5");
+    }
+
+    removeActiveButtonTheme(lightThemeButton);
+    removeActiveButtonTheme(darkThemeButton);
+    removeActiveButtonTheme(systemThemeButton);
+
+    if (theme === "light") {
+      addActiveButtonTheme(lightThemeButton);
+    } else if (theme === "dark") {
+      addActiveButtonTheme(darkThemeButton);
+    } else {
+      addActiveButtonTheme(systemThemeButton);
+    }
+  }
+
+  function animate() {
+    const animateElements = document.querySelectorAll(".animate");
+
+    animateElements.forEach((element, index) => {
+      setTimeout(() => {
+        element.classList.add("show");
+      }, index * 100);
+    });
+  }
+
+  function onScroll() {
+    if (window.scrollY > 0) {
+      document.documentElement.classList.add("scrolled");
+    } else {
+      document.documentElement.classList.remove("scrolled");
+    }
+  }
+
+  function scrollToTop(event) {
+    event.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }
+
+  function toggleTheme(dark) {
+    const css = document.createElement("style");
+
+    css.appendChild(
+      document.createTextNode(
+        `* {
+             -webkit-transition: none !important;
+             -moz-transition: none !important;
+             -o-transition: none !important;
+             -ms-transition: none !important;
+             transition: none !important;
+          }
+        `
+      )
+    );
+
+    document.head.appendChild(css);
+
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+    window.getComputedStyle(css).opacity;
+    document.head.removeChild(css);
+
+    setGiscusTheme();
+  }
+
+  function preloadTheme() {
+    const userTheme = localStorage.theme;
+
+    if (userTheme === "light" || userTheme === "dark") {
+      toggleTheme(userTheme === "dark");
+    } else {
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+  }
+
+  function addCopyCodeButtons() {
+    let copyButtonLabel = "📋";
+    let codeBlocks = Array.from(document.querySelectorAll("pre"));
+
+    async function copyCode(codeBlock, copyButton) {
+      const codeText = codeBlock.innerText;
+      const buttonText = copyButton.innerText;
+      const textToCopy = codeText.replace(buttonText, "");
+
+      await navigator.clipboard.writeText(textToCopy);
+      copyButton.innerText = "✅";
+
+      setTimeout(() => {
+        copyButton.innerText = copyButtonLabel;
+      }, 2000);
+    }
+
+    for (let codeBlock of codeBlocks) {
+      const wrapper = document.createElement("div");
+      wrapper.style.position = "relative";
+
+      const copyButton = document.createElement("button");
+      copyButton.innerText = copyButtonLabel;
+      copyButton.classList = "copy-code";
+
+      codeBlock.setAttribute("tabindex", "0");
+      codeBlock.appendChild(copyButton);
+
+      codeBlock.parentNode.insertBefore(wrapper, codeBlock);
+      wrapper.appendChild(codeBlock);
+
+      copyButton?.addEventListener("click", async () => {
+        await copyCode(codeBlock, copyButton);
+      });
+    }
+  }
+
+  const setGiscusTheme = () => {
+    const giscus = document.querySelector(".giscus-frame");
+
+    const isDark = document.documentElement.classList.contains("dark");
+
+    if (giscus) {
+      const url = new URL(giscus.src);
+      url.searchParams.set("theme", isDark ? "dark" : "light");
+      giscus.src = url.toString();
+    }
+  };
+
+  document.addEventListener("DOMContentLoaded", () => init());
+  document.addEventListener("astro:after-swap", () => init());
+  preloadTheme();
+</script><link rel="stylesheet" href="/_astro/_slug_.CHM80_UD.css">
+<style>summary[data-astro-cid-xvrfupwn]{cursor:pointer;border-top-left-radius:.5rem;border-top-right-radius:.5rem;padding:.375rem .75rem;font-weight:500;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}summary[data-astro-cid-xvrfupwn]:hover{background-color:#0000000d}summary[data-astro-cid-xvrfupwn]:hover:is(.dark *){background-color:#ffffff0d}details[data-astro-cid-xvrfupwn][open] summary[data-astro-cid-xvrfupwn]{background-color:#0000000d}details[data-astro-cid-xvrfupwn][open] summary[data-astro-cid-xvrfupwn]:is(.dark *){background-color:#ffffff0d}
+</style><script type="module" src="/_astro/hoisted.Dp10Oo9H.js"></script></head> <body> <header data-astro-transition-persist="astro-l7r54iwe-1"> <div class="mx-auto max-w-screen-sm px-3"> <div class="flex flex-wrap justify-between gap-y-2"> <a href="/" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out">  <div class="font-semibold"> Antonio Valentini&nbsp;🔬
+</div>  </a> <nav class="flex items-center gap-1 text-sm"> <a href="/blog" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> blog </a> <span> / </span> <a href="/projects" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> projects </a> <span> / </span> <button id="magnifying-glass" aria-label="Search" class="flex items-center rounded border border-black/15 bg-neutral-100 px-2 py-1 text-xs transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:bg-neutral-900 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> <svg height="16" stroke-linejoin="round" viewBox="0 0 16 16" width="16" style="color: currentcolor;"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.5 7C3.5 5.067 5.067 3.5 7 3.5C8.933 3.5 10.5 5.067 10.5 7C10.5 7.88461 10.1718 8.69256 9.63058 9.30876L9.30876 9.63058C8.69256 10.1718 7.88461 10.5 7 10.5C5.067 10.5 3.5 8.933 3.5 7ZM9.96544 11.0261C9.13578 11.6382 8.11014 12 7 12C4.23858 12 2 9.76142 2 7C2 4.23858 4.23858 2 7 2C9.76142 2 12 4.23858 12 7C12 8.11014 11.6382 9.13578 11.0261 9.96544L14.0303 12.9697L14.5607 13.5L13.5 14.5607L12.9697 14.0303L9.96544 11.0261Z" fill="currentColor"></path></svg>
+&nbsp;Search
+</button> </nav> </div> </div> </header> <main>  <div class="mx-auto max-w-screen-sm px-3"> <div class="animate"> <a href="/blog" class="not-prose group relative flex w-fit flex-nowrap rounded border border-black/15 py-1.5 pl-7 pr-3 transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute left-2 top-1/2 size-4 -translate-y-1/2 fill-none stroke-current stroke-2"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 scale-x-0 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-hover:scale-x-100 group-focus-visible:translate-x-0 group-focus-visible:scale-x-100"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-focus-visible:translate-x-0"></polyline> </svg> <div class="text-sm"> Back to blog </div> </a> </div> <div class="my-10 space-y-1"> <div class="animate flex items-center gap-1.5"> <div class="font-base text-sm"> <time datetime="2023-08-05T00:00:00.000Z"> August 05, 2023 </time> </div>
+&bull;
+<div class="font-base text-sm"> 10 min read </div> </div> <h1 class="animate text-3xl font-semibold text-black dark:text-white"> Configuration in ASP.NET Core: A Comprehensive Guide </h1> <div class="animate flex gap-2 pt-1"> <a href="/tags/net" class="rounded border border-black/15 px-2 py-1 text-sm transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> net </a><a href="/tags/asp-net-core" class="rounded border border-black/15 px-2 py-1 text-sm transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> asp-net-core </a><a href="/tags/csharp" class="rounded border border-black/15 px-2 py-1 text-sm transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> csharp </a><a href="/tags/web" class="rounded border border-black/15 px-2 py-1 text-sm transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> web </a> </div> </div> <details open class="animate rounded-lg border border-black/15 dark:border-white/20" data-astro-cid-xvrfupwn> <summary data-astro-cid-xvrfupwn>Table of Contents</summary> <nav class="" data-astro-cid-xvrfupwn> <ul class="py-3" data-astro-cid-xvrfupwn> <li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#introduction" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Introduction </a>  </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#the-foundation-of-aspnet-core-configuration-the-net-configuration-system" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> The Foundation of ASP.NET Core Configuration: The .NET Configuration System </a>  </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#a-closer-look-at-configuration-in-aspnet-core" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> A Closer Look at Configuration in ASP.NET Core </a> <ul class="translate-x-3"> <li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#configuring-via-appsettingsjson" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Configuring via ‘appsettings.json’ </a> <ul class="translate-x-3"> <li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#pros" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Pros: </a>  </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#cons" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Cons: </a>  </li> </ul> </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#configuring-via-environment-variables" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Configuring via Environment Variables </a> <ul class="translate-x-3"> <li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#pros-1" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Pros: </a>  </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#cons-1" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Cons: </a>  </li> </ul> </li> </ul> </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#other-built-in-configuration-providers-in-aspnet-core" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Other built-in Configuration Providers in ASP.NET Core </a> <ul class="translate-x-3"> <li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#1-in-memory-net-objects" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> 1. In-Memory .NET objects </a>  </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#2-xml-files" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> 2. XML Files </a>  </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#3-command-line-arguments" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> 3. Command-Line Arguments </a>  </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#4-azure-key-vault" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> 4. Azure Key Vault </a>  </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#5-user-secrets" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> 5. User Secrets </a>  </li> </ul> </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#understanding-configuration-provider-priority-in-aspnet-core" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Understanding Configuration Provider Priority in ASP.NET Core </a>  </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#accessing-configuration-settings-in-aspnet-core" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Accessing Configuration settings in ASP.NET Core </a> <ul class="translate-x-3"> <li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#accessing-configuration-directly-in-the-startup-class" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Accessing Configuration Directly in the Startup Class </a>  </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#accessing-configuration-via-dependency-injection" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Accessing Configuration via Dependency Injection </a>  </li> </ul> </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#configuration-binding-to-poco-classes" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Configuration Binding to POCO Classes </a>  </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#conclusion" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Conclusion </a>  </li> </ul> </nav> </details> <article class="animate"> <h2 id="introduction">Introduction</h2>
+<p>Software configuration is a crucial part of any application’s life cycle. It allows developers to mold an application to its environment, making it flexible and adaptable. In ASP.NET Core, the <code>WebApplicationBuilder</code> plays a crucial role in this configuration process. This article aims to shed light on the different ways to configure the WebApplicationBuilder using different configuration providers, and also discuss the common pros and cons of each method.</p>
+<h2 id="the-foundation-of-aspnet-core-configuration-the-net-configuration-system">The Foundation of ASP.NET Core Configuration: The .NET Configuration System</h2>
+<p>At its core, the ASP.NET Core configuration system derives from the broader .NET configuration system. The .NET configuration system provides a general-purpose framework for dealing with configuration data, offering a way to retrieve values for use in .NET applications. However, ASP.NET Core extends this base system to provide additional capabilities tailored for web application environments. This article will discuss how ASP.NET Core’s configuration system builds upon its .NET counterpart and highlight the differences between the two.</p>
+<p>In the .NET configuration system, developers primarily deal with <code>ConfigurationBuilder</code> and <code>ConfigurationRoot</code> classes. Configuration data is accessed as a simple key-value pair, and the sources of this data can include JSON files, XML files, INI files, and even command-line arguments. This configuration system is flexible and extensible, providing a solid foundation for ASP.NET Core’s configuration system.</p>
+<p>ASP.NET Core takes the .NET configuration system and enhances it by introducing a variety of web-specific configuration providers. These providers include capabilities to pull configuration data from environment variables, a system designed to prevent the accidental check-in of sensitive data during the development process, and from other providers.</p>
+<p>Furthermore, ASP.NET Core introduces the <code>IConfiguration</code> and <code>IConfigurationRoot</code> interfaces, designed to abstract away the complexity of dealing with different configuration sources. It uses dependency injection to provide access to the configuration data throughout the application, making it easier for developers to work with configuration values.</p>
+<p>One of the most significant differences between the two systems is the introduction of the <code>WebApplicationBuilder</code> in ASP.NET Core, which abstracts the process of creating a <code>ConfigurationBuilder</code>, adding common configuration sources, and building the <code>IConfiguration</code>. This makes setting up configuration in ASP.NET Core applications simpler and more streamlined.</p>
+<p>In conclusion, while ASP.NET Core’s configuration system is built upon the .NET configuration system, it enhances and tailors the system to meet the unique needs of web application environments. With added features, extended providers, and streamlined APIs, ASP.NET Core’s configuration system provides a powerful and flexible way to manage application configuration.</p>
+<h2 id="a-closer-look-at-configuration-in-aspnet-core">A Closer Look at Configuration in ASP.NET Core</h2>
+<p>ASP.NET Core comes with a robust configuration system. The <code>WebApplicationBuilder</code> provides a rich API to set up your application. It allows you to take advantage of configuration sources like JSON files, environment variables, command-line arguments, or even custom configuration providers.</p>
+<h3 id="configuring-via-appsettingsjson">Configuring via ‘appsettings.json’</h3>
+<p>The ‘appsettings.json’ file is one of the most common and preferred ways to manage configurations in ASP.NET Core applications. It provides an easily readable and editable JSON structure where you can define settings that will be loaded into the application on startup.</p>
+<p>To configure your application using ‘appsettings.json’, you need to call the <code>ConfigureAppConfiguration</code> method on the WebApplicationBuilder instance. This method allows you to define a delegate to configure the provided <code>ConfigurationBuilder</code>.</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-color-background);color:var(--astro-code-color-text); overflow-x: auto;" tabindex="0" data-language="csharp"><code><span class="line"><span style="color:var(--astro-code-token-keyword)">var</span><span style="color:var(--astro-code-color-text)"> builder </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-token-constant)"> WebApplication</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">CreateBuilder</span><span style="color:var(--astro-code-color-text)">(args);</span></span>
+<span class="line"><span style="color:var(--astro-code-token-constant)">builder</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">ConfigureAppConfiguration</span><span style="color:var(--astro-code-color-text)">((hostingContext</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-color-text)"> config) </span><span style="color:var(--astro-code-token-keyword)">=></span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">{</span></span>
+<span class="line"><span style="color:var(--astro-code-token-constant)">    config</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">AddJsonFile</span><span style="color:var(--astro-code-color-text)">(</span><span style="color:var(--astro-code-token-string-expression)">"appsettings.json"</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-color-text)"> optional</span><span style="color:var(--astro-code-token-punctuation)">:</span><span style="color:var(--astro-code-token-constant)"> true</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-color-text)"> reloadOnChange</span><span style="color:var(--astro-code-token-punctuation)">:</span><span style="color:var(--astro-code-token-constant)"> true</span><span style="color:var(--astro-code-color-text)">);</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">});</span></span>
+<span class="line"></span></code></pre>
+<h4 id="pros">Pros:</h4>
+<ol>
+<li>
+<p><strong>Easy to use:</strong> The ‘appsettings.json’ file is easy to read and write, making it an excellent choice for managing configuration data.</p>
+</li>
+<li>
+<p><strong>Hot Reload:</strong> The ‘appsettings.json’ supports hot reload. This means the application can detect changes in the file and apply these changes without requiring a restart.</p>
+</li>
+</ol>
+<h4 id="cons">Cons:</h4>
+<ol>
+<li>
+<p><strong>Sensitive Data Exposure:</strong> Storing sensitive data, like connection strings or API keys, can lead to security vulnerabilities if the file is not appropriately secured.</p>
+</li>
+<li>
+<p><strong>Environment Dependency:</strong> The configuration is tightly coupled with the application. Therefore, managing different environments (like development, staging, and production) could become cumbersome.</p>
+</li>
+</ol>
+<h3 id="configuring-via-environment-variables">Configuring via Environment Variables</h3>
+<p>Environment variables are a common way to set configuration values on the host machine. These are particularly useful for injecting configuration values without changing the application’s code or relying on external files.</p>
+<p>To configure your application using environment variables, you can again use the <code>ConfigureAppConfiguration</code> method:</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-color-background);color:var(--astro-code-color-text); overflow-x: auto;" tabindex="0" data-language="csharp"><code><span class="line"><span style="color:var(--astro-code-token-keyword)">var</span><span style="color:var(--astro-code-color-text)"> builder </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-token-constant)"> WebApplication</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">CreateBuilder</span><span style="color:var(--astro-code-color-text)">(args);</span></span>
+<span class="line"><span style="color:var(--astro-code-token-constant)">builder</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">ConfigureAppConfiguration</span><span style="color:var(--astro-code-color-text)">((hostingContext</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-color-text)"> config) </span><span style="color:var(--astro-code-token-keyword)">=></span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">{</span></span>
+<span class="line"><span style="color:var(--astro-code-token-constant)">    config</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">AddEnvironmentVariables</span><span style="color:var(--astro-code-color-text)">();</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">});</span></span>
+<span class="line"></span></code></pre>
+<h4 id="pros-1">Pros:</h4>
+<ol>
+<li>
+<p><strong>Platform Independent:</strong> Environment variables can be used across different platforms and languages, providing a universal method for configuration.</p>
+</li>
+<li>
+<p><strong>Secure:</strong> It’s a safer way to store sensitive data as these can be set up in the server environment and remain inaccessible to unauthorized users.</p>
+</li>
+</ol>
+<h4 id="cons-1">Cons:</h4>
+<ol>
+<li>
+<p><strong>Less Intuitive:</strong> As environment variables are not stored in a structured file like ‘appsettings.json’, it could be more challenging to track all available configuration values.</p>
+</li>
+<li>
+<p><strong>Potential for Conflicts:</strong> Environment variables are system-wide, so they could potentially conflict with other applications running on the same system.</p>
+</li>
+</ol>
+<h2 id="other-built-in-configuration-providers-in-aspnet-core">Other built-in Configuration Providers in ASP.NET Core</h2>
+<p>ASP.NET Core provides a range of built-in configuration providers that allow you to consume configuration data from various sources. This flexibility ensures that you can tailor your application’s configuration to fit the requirements of any environment or use case. Below are the built-in configuration providers that come with ASP.NET Core:</p>
+<h3 id="1-in-memory-net-objects">1. In-Memory .NET objects</h3>
+<p>The <code>MemoryConfigurationProvider</code> is used for in-memory collections. This provider is primarily used for testing or when you need to override values provided by other providers:</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-color-background);color:var(--astro-code-color-text); overflow-x: auto;" tabindex="0" data-language="csharp"><code><span class="line"><span style="color:var(--astro-code-token-constant)">builder</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">ConfigureAppConfiguration</span><span style="color:var(--astro-code-color-text)">((hostingContext</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-color-text)"> config) </span><span style="color:var(--astro-code-token-keyword)">=></span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">{</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    var</span><span style="color:var(--astro-code-color-text)"> dict </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-token-keyword)"> new</span><span style="color:var(--astro-code-token-function)"> Dictionary</span><span style="color:var(--astro-code-color-text)">&#x3C;</span><span style="color:var(--astro-code-token-keyword)">string</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-token-keyword)"> string</span><span style="color:var(--astro-code-color-text)">></span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    {</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">        {</span><span style="color:var(--astro-code-token-string-expression)">"MemoryCollectionKey"</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-token-string-expression)"> "Value from memory collection"</span><span style="color:var(--astro-code-color-text)">}</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    };</span></span>
+<span class="line"><span style="color:var(--astro-code-token-constant)">    config</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">AddInMemoryCollection</span><span style="color:var(--astro-code-color-text)">(dict);</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">});</span></span>
+<span class="line"></span></code></pre>
+<h3 id="2-xml-files">2. XML Files</h3>
+<p>The <code>XmlConfigurationProvider</code> is used for XML files. While not as commonly used as JSON, it’s there if you need it:</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-color-background);color:var(--astro-code-color-text); overflow-x: auto;" tabindex="0" data-language="csharp"><code><span class="line"><span style="color:var(--astro-code-token-constant)">builder</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">ConfigureAppConfiguration</span><span style="color:var(--astro-code-color-text)">((hostingContext</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-color-text)"> config) </span><span style="color:var(--astro-code-token-keyword)">=></span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">{</span></span>
+<span class="line"><span style="color:var(--astro-code-token-constant)">    config</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">AddXmlFile</span><span style="color:var(--astro-code-color-text)">(</span><span style="color:var(--astro-code-token-string-expression)">"customSettings.xml"</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-color-text)"> optional</span><span style="color:var(--astro-code-token-punctuation)">:</span><span style="color:var(--astro-code-token-constant)"> true</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-color-text)"> reloadOnChange</span><span style="color:var(--astro-code-token-punctuation)">:</span><span style="color:var(--astro-code-token-constant)"> true</span><span style="color:var(--astro-code-color-text)">);</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">});</span></span>
+<span class="line"></span></code></pre>
+<h3 id="3-command-line-arguments">3. Command-Line Arguments</h3>
+<p>The <code>CommandLineConfigurationProvider</code> is used for command-line arguments. This can be handy when you need to override some configuration values during startup:</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-color-background);color:var(--astro-code-color-text); overflow-x: auto;" tabindex="0" data-language="csharp"><code><span class="line"><span style="color:var(--astro-code-token-constant)">builder</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">ConfigureAppConfiguration</span><span style="color:var(--astro-code-color-text)">((hostingContext</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-color-text)"> config) </span><span style="color:var(--astro-code-token-keyword)">=></span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">{</span></span>
+<span class="line"><span style="color:var(--astro-code-token-constant)">    config</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">AddCommandLine</span><span style="color:var(--astro-code-color-text)">(args);</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">});</span></span>
+<span class="line"></span></code></pre>
+<h3 id="4-azure-key-vault">4. Azure Key Vault</h3>
+<p>The <code>AzureKeyVaultConfigurationProvider</code> is used to retrieve configuration data stored in Azure Key Vault. It provides a secure and centralized way to manage application secrets.</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-color-background);color:var(--astro-code-color-text); overflow-x: auto;" tabindex="0" data-language="csharp"><code><span class="line"><span style="color:var(--astro-code-token-constant)">builder</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">ConfigureAppConfiguration</span><span style="color:var(--astro-code-color-text)">((hostingContext</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-color-text)"> config) </span><span style="color:var(--astro-code-token-keyword)">=></span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">{</span></span>
+<span class="line"><span style="color:var(--astro-code-token-constant)">    config</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">AddAzureKeyVault</span><span style="color:var(--astro-code-color-text)">(</span></span>
+<span class="line"><span style="color:var(--astro-code-token-string-expression)">        "&#x3C;Your Vault Uri>"</span><span style="color:var(--astro-code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--astro-code-token-string-expression)">        "&#x3C;Your Client Id>"</span><span style="color:var(--astro-code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--astro-code-token-string-expression)">        "&#x3C;Your Client Secret>"</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    );</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">});</span></span>
+<span class="line"></span></code></pre>
+<h3 id="5-user-secrets">5. User Secrets</h3>
+<p>The <code>UserSecretsConfigurationProvider</code> is used for storing sensitive data during the development process. The User Secrets store data outside the project tree, thus preventing accidental check-in into source control:</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-color-background);color:var(--astro-code-color-text); overflow-x: auto;" tabindex="0" data-language="csharp"><code><span class="line"><span style="color:var(--astro-code-token-constant)">builder</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">ConfigureAppConfiguration</span><span style="color:var(--astro-code-color-text)">((hostingContext</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-color-text)"> config) </span><span style="color:var(--astro-code-token-keyword)">=></span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">{</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    if</span><span style="color:var(--astro-code-color-text)"> (</span><span style="color:var(--astro-code-token-constant)">hostingContext</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-constant)">HostingEnvironment</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">IsDevelopment</span><span style="color:var(--astro-code-color-text)">())</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    {</span></span>
+<span class="line"><span style="color:var(--astro-code-token-constant)">        config</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">AddUserSecrets</span><span style="color:var(--astro-code-color-text)">&#x3C;</span><span style="color:var(--astro-code-token-function)">Program</span><span style="color:var(--astro-code-color-text)">>();</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    }</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">});</span></span>
+<span class="line"></span></code></pre>
+<h2 id="understanding-configuration-provider-priority-in-aspnet-core">Understanding Configuration Provider Priority in ASP.NET Core</h2>
+<p>ASP.NET Core allows you to use multiple configuration providers in your applications, and each of them can potentially modify the same configuration keys. So, how does the system decide which value to use? The answer lies in the order of precedence among the configuration providers.</p>
+<p>When you add multiple configuration providers, the last one has the highest priority. This is because each successive provider overlays its keys on top of the previous ones. This means if you define the same configuration key in two different providers, the value from the provider added last will take precedence.</p>
+<p>Let’s take an example of an application configured to use ‘appsettings.json’ and environment variables:</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-color-background);color:var(--astro-code-color-text); overflow-x: auto;" tabindex="0" data-language="csharp"><code><span class="line"><span style="color:var(--astro-code-token-keyword)">var</span><span style="color:var(--astro-code-color-text)"> builder </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-token-constant)"> WebApplication</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">CreateBuilder</span><span style="color:var(--astro-code-color-text)">(args);</span></span>
+<span class="line"><span style="color:var(--astro-code-token-constant)">builder</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">ConfigureAppConfiguration</span><span style="color:var(--astro-code-color-text)">((hostingContext</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-color-text)"> config) </span><span style="color:var(--astro-code-token-keyword)">=></span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">{</span></span>
+<span class="line"><span style="color:var(--astro-code-token-constant)">    config</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">AddJsonFile</span><span style="color:var(--astro-code-color-text)">(</span><span style="color:var(--astro-code-token-string-expression)">"appsettings.json"</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-color-text)"> optional</span><span style="color:var(--astro-code-token-punctuation)">:</span><span style="color:var(--astro-code-token-constant)"> true</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-color-text)"> reloadOnChange</span><span style="color:var(--astro-code-token-punctuation)">:</span><span style="color:var(--astro-code-token-constant)"> true</span><span style="color:var(--astro-code-color-text)">);</span></span>
+<span class="line"><span style="color:var(--astro-code-token-constant)">    config</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">AddEnvironmentVariables</span><span style="color:var(--astro-code-color-text)">();</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">});</span></span>
+<span class="line"></span></code></pre>
+<p>In this scenario, if you have a key defined in both ‘appsettings.json’ and as an environment variable, the environment variable will take precedence because the environment variable configuration provider was added after the JSON file configuration provider.</p>
+<p>The order in which configuration providers are added is crucial. If you reverse the order of the providers in the above example, the ‘appsettings.json’ file will override any keys defined in the environment variables.</p>
+<p>Keep this priority rule in mind when defining your configuration providers, as it can significantly impact how your application behaves in different environments. This approach offers a high degree of flexibility, enabling you to fine-tune your configuration strategy to suit your specific needs.</p>
+<h2 id="accessing-configuration-settings-in-aspnet-core">Accessing Configuration settings in ASP.NET Core</h2>
+<p>Understanding how to configure your application is just the first step. The real power comes from leveraging these configurations within your application. In this paragraph, we’ll see how to access configuration settings in ASP.NET Core, both directly and using the ASP.NET Dependency Injection (DI) container.</p>
+<h3 id="accessing-configuration-directly-in-the-startup-class">Accessing Configuration Directly in the Startup Class</h3>
+<p>The <code>Startup</code> class in an ASP.NET Core application is where you configure your app’s request pipeline and services. You can access the configuration system directly in the <code>Startup</code> class. Here’s how you do it:</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-color-background);color:var(--astro-code-color-text); overflow-x: auto;" tabindex="0" data-language="csharp"><code><span class="line"><span style="color:var(--astro-code-token-keyword)">public</span><span style="color:var(--astro-code-token-keyword)"> class</span><span style="color:var(--astro-code-token-function)"> Startup</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">{</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    public</span><span style="color:var(--astro-code-token-function)"> IConfiguration</span><span style="color:var(--astro-code-color-text)"> Configuration { </span><span style="color:var(--astro-code-token-keyword)">get</span><span style="color:var(--astro-code-color-text)">; }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    public</span><span style="color:var(--astro-code-token-function)"> Startup</span><span style="color:var(--astro-code-color-text)">(</span><span style="color:var(--astro-code-token-function)">IConfiguration</span><span style="color:var(--astro-code-color-text)"> configuration)</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    {</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">        Configuration </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-color-text)"> configuration;</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    public</span><span style="color:var(--astro-code-token-keyword)"> void</span><span style="color:var(--astro-code-token-function)"> ConfigureServices</span><span style="color:var(--astro-code-color-text)">(</span><span style="color:var(--astro-code-token-function)">IServiceCollection</span><span style="color:var(--astro-code-color-text)"> services)</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    {</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">        var</span><span style="color:var(--astro-code-color-text)"> mySetting </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-token-constant)"> Configuration</span><span style="color:var(--astro-code-color-text)">[</span><span style="color:var(--astro-code-token-string-expression)">"MySetting"</span><span style="color:var(--astro-code-color-text)">];</span></span>
+<span class="line"><span style="color:var(--astro-code-token-comment)">        // ...</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-comment)">    // ...</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">}</span></span>
+<span class="line"></span></code></pre>
+<p>In the above code, the <code>IConfiguration</code> instance is injected into the <code>Startup</code> constructor. You can then use this instance to access configuration settings using the indexer.</p>
+<h3 id="accessing-configuration-via-dependency-injection">Accessing Configuration via Dependency Injection</h3>
+<p>One of the powerful features of ASP.NET Core is its built-in support for dependency injection. You can inject the <code>IConfiguration</code> interface into your controllers or any class that supports dependency injection. Here’s an example of how to do this:</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-color-background);color:var(--astro-code-color-text); overflow-x: auto;" tabindex="0" data-language="csharp"><code><span class="line"><span style="color:var(--astro-code-token-keyword)">public</span><span style="color:var(--astro-code-token-keyword)"> class</span><span style="color:var(--astro-code-token-function)"> MyController</span><span style="color:var(--astro-code-token-punctuation)"> :</span><span style="color:var(--astro-code-token-function)"> Controller</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">{</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    private</span><span style="color:var(--astro-code-token-keyword)"> readonly</span><span style="color:var(--astro-code-token-function)"> IConfiguration</span><span style="color:var(--astro-code-color-text)"> _configuration;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    public</span><span style="color:var(--astro-code-token-function)"> MyController</span><span style="color:var(--astro-code-color-text)">(</span><span style="color:var(--astro-code-token-function)">IConfiguration</span><span style="color:var(--astro-code-color-text)"> configuration)</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    {</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">        _configuration </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-color-text)"> configuration;</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    public</span><span style="color:var(--astro-code-token-function)"> IActionResult</span><span style="color:var(--astro-code-token-function)"> Index</span><span style="color:var(--astro-code-color-text)">()</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    {</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">        var</span><span style="color:var(--astro-code-color-text)"> mySetting </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-token-constant)"> _configuration</span><span style="color:var(--astro-code-color-text)">[</span><span style="color:var(--astro-code-token-string-expression)">"MySetting"</span><span style="color:var(--astro-code-color-text)">];</span></span>
+<span class="line"><span style="color:var(--astro-code-token-comment)">        // ...</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    }</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">}</span></span>
+<span class="line"></span></code></pre>
+<p>In the above code, the <code>IConfiguration</code> instance is injected into the controller’s constructor. You can then use this instance to access your configuration settings.</p>
+<h2 id="configuration-binding-to-poco-classes">Configuration Binding to POCO Classes</h2>
+<p>ASP.NET Core also supports configuration binding, which is the process of mapping configuration data to Plain Old CLR Objects (POCOs). This can make your code cleaner and easier to work with. Here’s an example:</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-color-background);color:var(--astro-code-color-text); overflow-x: auto;" tabindex="0" data-language="csharp"><code><span class="line"><span style="color:var(--astro-code-token-keyword)">public</span><span style="color:var(--astro-code-token-keyword)"> class</span><span style="color:var(--astro-code-token-function)"> MySettings</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">{</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    public</span><span style="color:var(--astro-code-token-keyword)"> string</span><span style="color:var(--astro-code-color-text)"> Key1 { </span><span style="color:var(--astro-code-token-keyword)">get</span><span style="color:var(--astro-code-color-text)">; </span><span style="color:var(--astro-code-token-keyword)">set</span><span style="color:var(--astro-code-color-text)">; }</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    public</span><span style="color:var(--astro-code-token-keyword)"> string</span><span style="color:var(--astro-code-color-text)"> Key2 { </span><span style="color:var(--astro-code-token-keyword)">get</span><span style="color:var(--astro-code-color-text)">; </span><span style="color:var(--astro-code-token-keyword)">set</span><span style="color:var(--astro-code-color-text)">; }</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">public</span><span style="color:var(--astro-code-token-keyword)"> class</span><span style="color:var(--astro-code-token-function)"> Startup</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">{</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    public</span><span style="color:var(--astro-code-token-function)"> IConfiguration</span><span style="color:var(--astro-code-color-text)"> Configuration { </span><span style="color:var(--astro-code-token-keyword)">get</span><span style="color:var(--astro-code-color-text)">; }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    public</span><span style="color:var(--astro-code-token-function)"> Startup</span><span style="color:var(--astro-code-color-text)">(</span><span style="color:var(--astro-code-token-function)">IConfiguration</span><span style="color:var(--astro-code-color-text)"> configuration)</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    {</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">        Configuration </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-color-text)"> configuration;</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    public</span><span style="color:var(--astro-code-token-keyword)"> void</span><span style="color:var(--astro-code-token-function)"> ConfigureServices</span><span style="color:var(--astro-code-color-text)">(</span><span style="color:var(--astro-code-token-function)">IServiceCollection</span><span style="color:var(--astro-code-color-text)"> services)</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    {</span></span>
+<span class="line"><span style="color:var(--astro-code-token-constant)">        services</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">Configure</span><span style="color:var(--astro-code-color-text)">&#x3C;</span><span style="color:var(--astro-code-token-function)">MySettings</span><span style="color:var(--astro-code-color-text)">>(</span><span style="color:var(--astro-code-token-constant)">Configuration</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-function)">GetSection</span><span style="color:var(--astro-code-color-text)">(</span><span style="color:var(--astro-code-token-string-expression)">"MySettings"</span><span style="color:var(--astro-code-color-text)">));</span></span>
+<span class="line"><span style="color:var(--astro-code-token-comment)">        // ...</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-comment)">    // ...</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">}</span></span>
+<span class="line"></span></code></pre>
+<p>In the above code, we’ve defined the class <code>MySettings</code> that matches the structure of our configuration data. We then use the <code>Configure</code> method to bind the <code>MySettings</code> section of the configuration to instances of <code>MySettings</code>.</p>
+<p>You can then access these settings in your controllers by injecting <code>IOptions&#x3C;MySettings></code>:</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-color-background);color:var(--astro-code-color-text); overflow-x: auto;" tabindex="0" data-language="csharp"><code><span class="line"><span style="color:var(--astro-code-token-keyword)">public</span><span style="color:var(--astro-code-token-keyword)"> class</span><span style="color:var(--astro-code-token-function)"> MyController</span><span style="color:var(--astro-code-token-punctuation)"> :</span><span style="color:var(--astro-code-token-function)"> Controller</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">{</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    private</span><span style="color:var(--astro-code-token-keyword)"> readonly</span><span style="color:var(--astro-code-token-function)"> MySettings</span><span style="color:var(--astro-code-color-text)"> _mySettings;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    public</span><span style="color:var(--astro-code-token-function)"> MyController</span><span style="color:var(--astro-code-color-text)">(</span><span style="color:var(--astro-code-token-function)">IOptions</span><span style="color:var(--astro-code-color-text)">&#x3C;</span><span style="color:var(--astro-code-token-function)">MySettings</span><span style="color:var(--astro-code-color-text)">> mySettings)</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    {</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">        _mySettings </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-token-constant)"> mySettings</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-constant)">Value</span><span style="color:var(--astro-code-color-text)">;</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    public</span><span style="color:var(--astro-code-token-function)"> IActionResult</span><span style="color:var(--astro-code-token-function)"> Index</span><span style="color:var(--astro-code-color-text)">()</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    {</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">        var</span><span style="color:var(--astro-code-color-text)"> key1 </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-token-constant)"> _mySettings</span><span style="color:var(--astro-code-color-text)">.</span><span style="color:var(--astro-code-token-constant)">Key1</span><span style="color:var(--astro-code-color-text)">;</span></span>
+<span class="line"><span style="color:var(--astro-code-token-comment)">        // ...</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">    }</span></span>
+<span class="line"><span style="color:var(--astro-code-color-text)">}</span></span>
+<span class="line"></span></code></pre>
+<h2 id="conclusion">Conclusion</h2>
+<p>ASP.NET Core offers a flexible and powerful configuration system, allowing developers to choose the best approach for their application’s unique needs. All the built-in configuration providers offer some advantages, but they also come with their caveats. Therefore, a well-thought-out combination of these approaches often yields the best results, providing both flexibility and security. Moreover, by understanding how to access settings within your application, you can create applications that are easier to manage and more adaptable to change. Remember, picking the right configuration management is a crucial step in building scalable, maintainable, and secure ASP.NET Core applications.</p> <div class="mt-24"> <div class="grid grid-cols-2 gap-1.5 sm:gap-3"> <a href="/blog/how-to-fix-invalid-value-for-registry-error-when-opening-photos" class="group relative flex flex-nowrap rounded-lg border border-black/15 px-4 py-3 pl-10 no-underline transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute left-2 top-1/2 size-5 -translate-y-1/2 fill-none stroke-current stroke-2"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-3 scale-x-0 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-hover:scale-x-100 group-focus-visible:translate-x-0 group-focus-visible:scale-x-100"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-focus-visible:translate-x-0"></polyline> </svg> <div class="flex items-center text-sm">How to Fix Invalid Value for Registry Error when Opening Photos</div> </a> <a href="/blog/how-to-use-dapper" class="group relative flex flex-grow flex-row-reverse flex-nowrap rounded-lg border border-black/15 px-4 py-4 pr-10 no-underline transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute right-2 top-1/2 size-5 -translate-y-1/2 fill-none stroke-current stroke-2"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-3 scale-x-0 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-hover:scale-x-100 group-focus-visible:translate-x-0 group-focus-visible:scale-x-100"></line> <polyline points="12 5 19 12 12 19" class="-translate-x-1 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-focus-visible:translate-x-0"></polyline> </svg> <div class="flex items-center text-sm">How to use Dapper</div> </a> </div> </div> <div class="mt-24"> <div class="giscus"></div> <script data-astro-rerun src="https://giscus.app/client.js" data-repo="trevortylerlee/astro-micro" data-repo-id="R_kgDOL_6l9Q" data-category="Announcements" data-category-id="DIC_kwDOL_6l9c4Cfk55" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="preferred_color_scheme" data-lang="en" data-loading="lazy" crossorigin="anonymous" async></script> </div> </article> </div>  </main> <footer class="animate"> <div class="mx-auto max-w-screen-sm px-3"> <div class="relative"> <div class="absolute -top-12 right-0"> <button id="back-to-top" class="group relative flex w-fit flex-nowrap rounded border border-black/15 py-1.5 pl-8 pr-3 transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute left-2 top-1/2 size-4 -translate-y-1/2 rotate-90 fill-none stroke-current stroke-2"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 scale-x-0 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-hover:scale-x-100 group-focus-visible:translate-x-0 group-focus-visible:scale-x-100"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-focus-visible:translate-x-0"></polyline> </svg> <div class="text-sm">Back to top</div> </button> </div> </div> <div class="flex items-center justify-between"> <div>&copy; 2024 • Antonio Valentini 🔬</div> <div class="flex flex-wrap items-center gap-1.5"> <button id="light-theme-button" aria-label="Light theme" class="group flex size-9 items-center justify-center rounded border border-black/15 hover:bg-black/5 focus-visible:bg-black/5 dark:border-white/20 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="transition-colors duration-300 ease-in-out group-hover:animate-pulse group-hover:stroke-black group-focus-visible:animate-pulse group-focus-visible:stroke-black group-hover:dark:stroke-white dark:group-focus-visible:stroke-white"> <circle cx="12" cy="12" r="5"></circle> <line x1="12" y1="1" x2="12" y2="3"></line> <line x1="12" y1="21" x2="12" y2="23"></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line> <line x1="1" y1="12" x2="3" y2="12"></line> <line x1="21" y1="12" x2="23" y2="12"></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line> </svg> </button> <button id="dark-theme-button" aria-label="Dark theme" class="group flex size-9 items-center justify-center rounded border border-black/15 hover:bg-black/5 focus-visible:bg-black/5 dark:border-white/20 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="transition-colors duration-300 ease-in-out group-hover:animate-pulse group-hover:stroke-black group-focus-visible:animate-pulse group-focus-visible:stroke-black group-hover:dark:stroke-white dark:group-focus-visible:stroke-white"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path> </svg> </button> <button id="system-theme-button" aria-label="System theme" class="group flex size-9 items-center justify-center rounded border border-black/15 hover:bg-black/5 focus-visible:bg-black/5 dark:border-white/20 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="transition-colors duration-300 ease-in-out group-hover:animate-pulse group-hover:stroke-black group-focus-visible:animate-pulse group-focus-visible:stroke-black group-hover:dark:stroke-white dark:group-focus-visible:stroke-white"> <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect> <line x1="8" y1="21" x2="16" y2="21"></line> <line x1="12" y1="17" x2="12" y2="21"></line> </svg> </button> </div> </div> </div> </footer> <aside data-pagefind-ignore> <div id="backdrop" class="bg-[rgba(0, 0, 0, 0.5] invisible fixed left-0 top-0 z-50 flex h-screen w-full justify-center p-6 backdrop-blur-sm" data-astro-transition-persist="astro-3snakcvo-2"> <div id="pagefind-container" class="m-0 flex h-fit max-h-[80%] w-full max-w-screen-sm flex-col overflow-auto rounded border border-black/15 bg-neutral-100 p-2 px-4 py-3 shadow-lg dark:border-white/20 dark:bg-neutral-900"> <div id="search" class="pagefind-ui pagefind-init" data-pagefind-ui data-bundle-path="/pagefind/" data-ui-options="{&#34;showImages&#34;:false,&#34;excerptLength&#34;:15,&#34;resetStyles&#34;:false}"></div>  <div class="mr-2 pb-1 pt-4 text-right text-xs dark:prose-invert">
+Press <span class="prose text-xs dark:prose-invert"><kbd class="">Esc</kbd></span> or click anywhere to close
+</div> </div> </div> </aside> <script>
+  const magnifyingGlass = document.getElementById("magnifying-glass");
+  const backdrop = document.getElementById("backdrop");
+
+  function openPagefind() {
+    const searchDiv = document.getElementById("search");
+    const search = searchDiv.querySelector("input");
+    setTimeout(() => {
+      search.focus();
+    }, 0);
+    backdrop?.classList.remove("invisible");
+    backdrop?.classList.add("visible");
+  }
+
+  function closePagefind() {
+    const search = document.getElementById("search");
+    search.value = "";
+    backdrop?.classList.remove("visible");
+    backdrop?.classList.add("invisible");
+  }
+
+  // open pagefind
+  magnifyingGlass?.addEventListener("click", () => {
+    openPagefind();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "/") {
+      e.preventDefault();
+      openPagefind();
+    } else if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+      e.preventDefault();
+      openPagefind();
+    }
+  });
+
+  // close pagefind
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closePagefind();
+    }
+  });
+
+  // close pagefind when searched result(link) clicked
+  document.addEventListener("click", (event) => {
+    if (event.target.classList.contains("pagefind-ui__result-link")) {
+      closePagefind();
+    }
+  });
+
+  backdrop?.addEventListener("click", (event) => {
+    if (!event.target.closest("#pagefind-container")) {
+      closePagefind();
+    }
+  });
+
+  // prevent form submission
+  const form = document.getElementById("form");
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault();
+  });
+</script>  </body></html>
