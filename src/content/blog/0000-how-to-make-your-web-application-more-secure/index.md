@@ -1,6 +1,6 @@
 ---
 title: "How to make your web application more secure"
-description: ""
+description: "Enhancing web application security: insights on external assets, user input validation, and HTTP headers."
 date: "2018-03-04"
 draft: false
 slug: how-to-make-your-web-application-more-secure
