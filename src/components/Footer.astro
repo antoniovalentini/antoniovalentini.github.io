@@ -2,6 +2,7 @@
 import Container from "@components/Container.astro";
 import { SITE } from "@consts";
 import BackToTop from "@components/BackToTop.astro";
+import Link from "./Link.astro";
 ---
 
 <footer class="animate">
@@ -12,7 +13,7 @@ import BackToTop from "@components/BackToTop.astro";
       </div>
     </div>
     <div class="flex items-center justify-between">
-      <div>&copy; {new Date().getFullYear()} • {SITE.TITLE} 🔬</div>
+      <div>&copy; {new Date().getFullYear()} • {SITE.TITLE} - Blog made using <Link href="https://astro.build/">Astro</Link> and the <Link href="https://github.com/trevortylerlee/astro-micro">Astro Micro</Link> theme</div>
       <div class="flex flex-wrap items-center gap-1.5">
         <button
           id="light-theme-button"
