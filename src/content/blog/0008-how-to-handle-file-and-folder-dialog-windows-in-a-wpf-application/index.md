@@ -10,7 +10,7 @@ tags:
   - filedialog
   - folderbrowser
   - winforms
-  - wpf"
+  - wpf
 ---
 
 WPF (Windows Presentation Foundation) is a set of libraries relying on the .NET Framework (also available from .NET Core 3) which allows you to build graphical desktop applications. On December 2018,  [Microsoft](https://en.wikipedia.org/wiki/Microsoft) announced releasing WPF as open source project on [GitHub](https://github.com/dotnet/wpf).
