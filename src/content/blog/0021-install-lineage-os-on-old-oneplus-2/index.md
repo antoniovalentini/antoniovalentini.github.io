@@ -19,13 +19,13 @@ tags:
 
 While cleaning out my drawer of old tech gadgets, I stumbled upon my old OnePlus 2 phone that had been sitting there for years. An article about LineageOS came to mind, so I decided to give the phone a second life by installing it. 
 
-![LineageOS logo](./images/op2.jpeg)
+![Old OnePlus2](./images/op2.jpeg)
 
 ## What is LineageOS?
 
 ![LineageOS logo](./images/LineageOS_Logo.svg.png)
 
-[LineageOS](https://lineageos.org/) is a free, open-source OS based on Android. It is the successor to CyanogenMod and provides a clean, bloatware-free Android experience.
+[LineageOS](https://lineageos.org/) is a free, open-source OS based on Android. It seems to be the successor of CyanogenMod, and claims to give you a clean, bloatware-free Android experience.
 
 The OnePlus 2, released way back in 2015, was long abandoned by OnePlus and my device looked pretty slow while testing it with clean new stock image. My hope here is that the device can get a new life with LineageOS (spoiler: I won't be disappointed).
 
@@ -74,11 +74,11 @@ You can either download the zip and copy it in your local copy of the LineageOS 
 
 Next time you run a `repo sync`, it should fetch the required files from the right branch. Then just run `breakfast oneplus2` again to make sure everything is in place, followed by `source build/envsetup.sh`, and you should be ready to run the `brunch oneplus2` command to start the build.
 
-The build process can be lengthy and may fail occasionally. In my case, the build took more than 40 minutes to complete.
+The build process can be very long, and can fail sometimes. In my case the build took more than 40 mintues to complete.
 
 ![Build result showing successful LineageOS installation](./images/build-result.png)
 
-Once you’re done, boot into recovery mode (hold `Volume Down + Power`), and follow the instructions from the official guide to flash your brand-new LineageOS zip image on your OnePlus 2.
+By the way, once you're done, boot into recovery mode (hold `Volume Down + Power`), and follow the instructions from the official guide to flash your brand new LineageOS zip image on your OnePlus 2.
 
 In case of any errors, make sure you follow **all the steps** in the official guide. They're not kidding when they show the red banner warning you not to proceed if any of the previous steps have failed. Make sure you read **everything** in that guide.
 
