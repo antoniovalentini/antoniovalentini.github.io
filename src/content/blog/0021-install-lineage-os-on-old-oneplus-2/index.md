@@ -54,6 +54,8 @@ In short, the official tutorial will guide you through how to:
 - install ADB and fastboot on your pc
 - unlock the phone's bootloader
 - install a custom recovery
+- build your own LineageOS image
+- flash the new image on the phone
 
 I had some issues with `fastboot` (`no permissions (user in plugdev group....)`), and to fix it, I followed [the official Android Developer Guide](https://developer.android.com/studio/run/device#setting-up) to set up a device for development.
 
@@ -90,9 +92,7 @@ After spending a couple of hours trying to build and flash the new image, watchi
 
 Honestly, I was surprised by how well LineageOS runs on this 2015 hardware. It's way faster than the stock image, and the Snapdragon 810 handles basic tasks like browsing, messaging, and some light gaming perfectly.
 
-<p style="text-align: center;">
-  <img src="./images/fdroid-logo.png" alt="FDroid logo" width="160">
-</p>
+![FDroid logo](./images/fdroid-logo.png)
 
 Oh, and I didn't install the Play Store or Google services. The phone is now "UNGOOGLED" (I believe that's the official term). I've installed [F-Droid](https://f-droid.org/) and I'm exploring it, as it's my first time using it.
 
