@@ -1,9 +1,12 @@
 ---
-import Head from "@components/Head.astro";
-import Header from "@components/Header.astro";
-import Footer from "@components/Footer.astro";
-import Pagefind from "@components/PageFind.astro";
+// import Head from "@components/Head.astro";
+// import Header from "@components/Header.astro";
+// import Footer from "@components/Footer.astro";
+// import Pagefind from "@components/PageFind.astro";
+import BackToTop from "@components/BackToTop.astro";
 import { SITE } from "@consts";
+
+import "../styles/global.css";
 
 type Props = {
   title: string;
@@ -16,7 +19,7 @@ const { title, description } = Astro.props;
 <!doctype html>
 <html lang="en">
   <head>
-    <Head title={`${title} | ${SITE.TITLE}`} description={description} />
+    <!-- <Head title={`${title} | ${SITE.TITLE}`} description={description} /> -->
   </head>
   <body>
     <noscript>
@@ -27,11 +30,15 @@ const { title, description } = Astro.props;
         }
       </style>
     </noscript>
-    <Header />
+    <!-- <Header /> -->
     <main>
+      <h1>Antonio Valentini</h1>
       <slot />
     </main>
-    <Footer />
-    <Pagefind />
+    <div style="margin: 1rem 0;">
+        <BackToTop />
+    </div>
+    <!-- <Footer /> -->
+    <!-- <Pagefind /> -->
   </body>
 </html>
