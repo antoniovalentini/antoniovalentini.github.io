@@ -42,3 +42,10 @@ main {
 ```xml
 <div class="space-y-16"> <!-- intead of 10 -->
 ```
+
+### wrap tags inside each article using flex-wrap
+```xml
+<div class="animate flex flex-wrap gap-2 pt-1">
+  <!-- tags here -->
+</div>
+```
