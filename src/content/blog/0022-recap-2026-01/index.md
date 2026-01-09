@@ -13,8 +13,7 @@ tags:
 
 - Lteitaly: find mobile providers antennas around italy on a map
 - homelab situation
-
-
+- HortusFox: self-hosted plant tracking & management
 
 ### Lte Italy
 
@@ -37,4 +36,6 @@ Once you start tinkering with homelab's stuff, it's so easy to descend in a neve
 
 ![current-homelab-setup](./images/current-homelab-setup.png)
 
-###
+### HortusFox
+
+https://www.hortusfox.com/screenshots
