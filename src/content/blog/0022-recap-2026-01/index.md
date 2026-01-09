@@ -29,7 +29,7 @@ It's been a couple of months now since I started working on my tiny homelab. I s
 
 ![pi-hole setup](./images/pi-hole.png)
 
-Then I heard about home media servers, used to stream your own media anywhere at home (and outside eventually), and so I resurrected a couple of old machines I had in the closet: two Dell OptiPlex 790 with an Intel i5-2500S and 4GB of RAM (upgraded to 16GB later on). I used to ran [Jellyfin](https://jellyfin.org/) on it, which quickly turned into the whole *arr stack. Everything was running on an internal SSD plus a couple of spare USB drives I had laying around.
+Then I heard about home media servers, used to stream your own media anywhere at home (and outside eventually), and so I resurrected a couple of old machines I had in the closet: two [Dell OptiPlex 790](https://www.dell.com/support/product-details/en-us/product/optiplex-790/overview) with an Intel i5-2500S and 4GB of RAM (upgraded to 16GB later on). I used to ran [Jellyfin](https://jellyfin.org/) on it, which quickly turned into the whole *arr stack. Everything was running on an internal SSD plus a couple of spare USB drives I had laying around.
 
 ![optiplex setup](./images/optiplex-setup.png)
 
