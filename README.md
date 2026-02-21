@@ -72,3 +72,6 @@ main {
   <!-- tags here -->
 </div>
 ```
+### [package.json](./package.json)
+
+Keep `katex` dependency.
