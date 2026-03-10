@@ -14,7 +14,7 @@ tags:
 
 ## Introduction
 
-I've saved a digital photo frame from the bin and started poking around with its board. It's based on an `MStar MSPD01B-LF`. I managed to find the UART and got to read something from the boot sequence. Find the pastebin [here](https://pastebin.com/KhmKQCvK).
+I've saved a digital photo frame from the bin and started poking around with its board. It's based on an `MStar MSPD01B-LF`. I managed to find the UART and got to read something from the boot sequence. Find the full output [here](/blog/0023-dpf-dikom/files/uart-dump.log).
 
 I was looking for a shell, but can't send any inputs so far. I might try desoldering the SPI memory and see if I can extract anything with a programmer.
 
@@ -114,7 +114,7 @@ Based on this [GitHub Gist](https://gist.github.com/throwaway96/1afce958952ffe45
 
 ![IC-IMAGE](./images/spi-flash.jpg)
 
-The chip is a cFeon (EON Silicon Solution Inc.) `EN25F16-100HIP`. [Datasheet](./files/EN25F16.PDF).
+The chip is a cFeon (EON Silicon Solution Inc.) `EN25F16-100HIP`. [Datasheet](/blog/0023-dpf-dikom/files/EN25F16.PDF).
 
 Specs:
 - Type: SPI (Serial Peripheral Interface) Flash Memory
@@ -126,7 +126,7 @@ Specs:
 The small circular indentation (dot) in the bottom left corner of the chip should be the `Pin 1` indicator.
 
 ### RAM
-There is a single Etrontech EM638165TS-6G ([datasheet](./files/EM638165TS-6G.PDF)) SDRAM IC in a 54-pin 400mil TSOP package at the top of the board below the MStar SoC. It is organized as 4 banks of 1M 16-bit words, for a capacity of 64Mbit (8MByte). Its 6ns cycle time equates to a frequency of 166MHz.
+There is a single Etrontech EM638165TS-6G ([datasheet](/blog/0023-dpf-dikom/files/EM638165TS-6G.PDF)) SDRAM IC in a 54-pin 400mil TSOP package at the top of the board below the MStar SoC. It is organized as 4 banks of 1M 16-bit words, for a capacity of 64Mbit (8MByte). Its 6ns cycle time equates to a frequency of 166MHz.
 
 ### Buttons
 There are 7 buttons, actuated via a flexible plastic insert in the case.
@@ -222,4 +222,4 @@ Start msAPI_MIU_Get_BinInfo() success!
 osdcp_text_addr=11f400
 ```
 
-[Here's the full output](./files/uart-dump.log).
+[Here's the full output](/blog/0023-dpf-dikom/files/uart-dump.log).
