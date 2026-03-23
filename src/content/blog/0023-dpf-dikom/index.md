@@ -3,7 +3,7 @@ title: "Finding UART on a DIKOM Digital Photo Frame"
 description: "A couple of words about my experience finding the UART on a digital photo frame."
 date: "2026-03-08"
 draft: false
-slug: 0023-dpf-dikom
+slug: hacking-a-dikom-dpf
 tags:
   - hardware-hacking
   - uart
