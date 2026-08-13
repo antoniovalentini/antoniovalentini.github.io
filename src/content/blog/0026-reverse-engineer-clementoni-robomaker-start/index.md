@@ -135,7 +135,7 @@ The audio payload needs to be sent in chunks of 20 bytes, and there needs to be 
 
 After a couple of afternoons spent tweaking with the robot, I managed to build a tiny UI, using AvaloniaUI, to connect to the robot and execute simple command sequences, and of course, play custom audio clips such as the Star Wars imperial march. The result is far from excellent compared to the built-in audio clips, but it's enough for now.
 
-Here's a small video of the robot playing the imperial march:
+Here's a small video of the robot playing the imperial march (just refresh the page is you see `No video supported format and MIME type found`):
 
 <video src="/blog/0026-reverse-engineer-clementoni-robomaker-start/imperial-march.mp4" controls></video>
 
